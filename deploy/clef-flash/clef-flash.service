@@ -1,0 +1,26 @@
+[Unit]
+Description=Clef-Flash optimized decision API
+After=network.target
+
+[Service]
+Type=simple
+User=clef-flash
+Group=clef-flash
+WorkingDirectory=/opt/clef-flash
+EnvironmentFile=/etc/clef-flash/env
+Environment=LD_LIBRARY_PATH=/opt/clef-flash/bin
+ExecStart=/opt/clef-flash/bin/llama-server -m ${MODEL_PATH} --host ${HTTP_HOST} --port ${HTTP_PORT} -c 2048 -t 4 -tb 4 -b 2048 -ub 2048 -np 1 -fa off --fit off --repack --offline --no-webui --log-verbosity 3
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=clef-flash
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/clef-flash
+
+[Install]
+WantedBy=multi-user.target
