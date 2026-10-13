@@ -1174,6 +1174,11 @@ struct ggml_tensor * llama_model_loader::create_tensor(
             throw std::runtime_error(format("missing tensor info mapping for %s", tn.str().c_str()));
         }
 
+        // Clef 用输出权重查表，不能将其放入仅支持矩阵乘法的缓冲区。
+        if (get_arch() == LLM_ARCH_CLEF && tn_tensor == LLM_TENSOR_OUTPUT) {
+            info.op = GGML_OP_GET_ROWS;
+        }
+
         // skip unused tensors
         if (info.op == GGML_OP_NONE || (flags & TENSOR_SKIP)) {
             const size_t nbytes = ggml_nbytes(t_meta);
